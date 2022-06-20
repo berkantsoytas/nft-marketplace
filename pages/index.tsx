@@ -8,28 +8,6 @@ import { useWeb3 } from "@providers/web3";
 const Home: NextPage = () => {
   const { provider, contract } = useWeb3();
 
-  const getNftInfo = async () => {
-    console.log(await contract!.name());
-    console.log(await contract!.symbol());
-  };
-
-  if (contract) {
-    getNftInfo();
-  }
-
-  const getAccounts = async () => {
-    const accounts = await provider!.listAccounts();
-    if (accounts.length === 0) {
-      // User is likely not logged in to MetaMask
-      return null;
-    }
-    console.log(accounts[0]);
-  };
-
-  if (provider) {
-    getAccounts();
-  }
-
   return (
     <BaseLayout>
       <div className="relative bg-gray-50 pt-16 pb-20 px-4 sm:px-6 lg:pt-24 lg:pb-28 lg:px-8">
