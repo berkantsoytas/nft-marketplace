@@ -1,4 +1,4 @@
 {
   "css.customData": [".vscode/css_custom_data.json"],
-  "prettier.printWidth": 120
+  "prettier.printWidth": 80
 }

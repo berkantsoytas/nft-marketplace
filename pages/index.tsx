@@ -6,10 +6,23 @@ import { NftMetadata } from "@_types/nft";
 import { useWeb3 } from "@providers/web3";
 
 const Home: NextPage = () => {
-  const { provider } = useWeb3();
+  const { provider, contract } = useWeb3();
+
+  const getNftInfo = async () => {
+    console.log(await contract!.name());
+    console.log(await contract!.symbol());
+  };
+
+  if (contract) {
+    getNftInfo();
+  }
 
   const getAccounts = async () => {
     const accounts = await provider!.listAccounts();
+    if (accounts.length === 0) {
+      // User is likely not logged in to MetaMask
+      return null;
+    }
     console.log(accounts[0]);
   };
 
@@ -25,7 +38,9 @@ const Home: NextPage = () => {
         </div>
         <div className="relative">
           <div className="text-center">
-            <h2 className="text-3xl tracking-tight font-extrabold text-gray-900 sm:text-4xl">Amazing Creatures NFTs</h2>
+            <h2 className="text-3xl tracking-tight font-extrabold text-gray-900 sm:text-4xl">
+              Amazing Creatures NFTs
+            </h2>
             <p className="mt-3 max-w-2xl mx-auto text-xl text-gray-500 sm:mt-4">
               Mint a NFT to get unlimited ownership forever!
             </p>
