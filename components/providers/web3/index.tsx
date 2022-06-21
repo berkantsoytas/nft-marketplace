@@ -6,7 +6,12 @@ import {
   useEffect,
   useState,
 } from "react";
-import { createDefaultState, loadContract, Web3State } from "./utils";
+import {
+  createDefaultState,
+  createDefaultWeb3State,
+  loadContract,
+  Web3State,
+} from "./utils";
 import { ethers } from "ethers";
 import { setupHooks } from "@hooks/web3/setupHooks";
 
@@ -26,13 +31,14 @@ const Web3Provider: FunctionComponent<Web3ProviderProps> = ({ children }) => {
         window.ethereum as any
       );
       const contract = await loadContract("NftMarket", provider);
-      setWeb3({
-        isLoading: false,
-        contract,
-        ethereum: window.ethereum,
-        provider,
-        hooks: setupHooks({ ethereum: window.ethereum, contract, provider }),
-      });
+      setWeb3(
+        createDefaultWeb3State({
+          isLoading: false,
+          contract,
+          ethereum: window.ethereum,
+          provider,
+        })
+      );
     }
 
     initWeb3();
