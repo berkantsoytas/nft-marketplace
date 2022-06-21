@@ -11,9 +11,22 @@ export const hookFactory: AccountFactory =
   (params) => {
     // conditionally swr block
     // eslint-disable-next-line react-hooks/rules-of-hooks
-    const swrRes = useSWR(provider ? "web3/useAccount" : null, () => {
-      return "Test user";
-    });
+    const swrRes = useSWR(
+      provider ? "web3/useAccount" : null,
+      async () => {
+        const accounts = await provider!.listAccounts();
+        const account = accounts[0];
+
+        if (!account) {
+          throw "Cannot retrieve account! Please, connect to web3 wallet!";
+        }
+
+        return account;
+      },
+      {
+        revalidateOnFocus: false,
+      }
+    );
 
     return swrRes;
   };
