@@ -8,7 +8,7 @@ import {
 } from "react";
 import {
   createDefaultState,
-  createDefaultWeb3State,
+  createWeb3State,
   loadContract,
   Web3State,
 } from "./utils";
@@ -27,18 +27,28 @@ const Web3Provider: FunctionComponent<Web3ProviderProps> = ({ children }) => {
 
   useEffect(() => {
     async function initWeb3() {
-      const provider = new ethers.providers.Web3Provider(
-        window.ethereum as any
-      );
-      const contract = await loadContract("NftMarket", provider);
-      setWeb3(
-        createDefaultWeb3State({
-          isLoading: false,
-          contract,
-          ethereum: window.ethereum,
-          provider,
-        })
-      );
+      try {
+        const provider = new ethers.providers.Web3Provider(
+          window.ethereum as any
+        );
+        const contract = await loadContract("NftMarket", provider);
+        setWeb3(
+          createWeb3State({
+            isLoading: false,
+            contract,
+            ethereum: window.ethereum,
+            provider,
+          })
+        );
+      } catch (error: any) {
+        console.error("Please, intsall web3 wallet.");
+        setWeb3((api) =>
+          createWeb3State({
+            ...(api as any),
+            isLoading: false,
+          })
+        );
+      }
     }
 
     initWeb3();
