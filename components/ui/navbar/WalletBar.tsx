@@ -63,7 +63,7 @@ const WalletBar: FunctionComponent<WalletBarProps> = ({
           </Menu.Item>
           <Menu.Item>
             {({ active }) => (
-              <Link href="/profile">
+              <Link href={"/profile"}>
                 <a
                   className={classNames(
                     active ? "bg-gray-100" : "",
@@ -99,7 +99,8 @@ const WalletBar: FunctionComponent<WalletBarProps> = ({
       <div>
         <button
           onClick={() => {
-            window.open("https://metamask.io", "_ blank");
+            window.open("https://metamask.io", "_blank");
+            window.close();
           }}
           type="button"
           className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-full shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"

@@ -8,12 +8,12 @@ type UseAccountResponse = {
   isInstalled: boolean;
 };
 
-type AccountFactory = CryptoHookFactory<string, UseAccountResponse>;
+type AccountHookFactory = CryptoHookFactory<string, UseAccountResponse>;
 
-export type UseAccountHook = ReturnType<AccountFactory>;
+export type UseAccountHook = ReturnType<AccountHookFactory>;
 
 // deps -> provider, ethereum, contract (web3 state)
-export const hookFactory: AccountFactory =
+export const hookFactory: AccountHookFactory =
   ({ provider, ethereum, isLoading }) =>
   () => {
     // conditionally swr block
