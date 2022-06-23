@@ -27,9 +27,9 @@ const setGlobalListeners = (ethereum: MetaMaskInpageProvider) => {
   ethereum.on("accountsChanged", handleAccount(ethereum));
 };
 
-const removeGlobalListners = (ethereum: MetaMaskInpageProvider) => {
-  ethereum.removeListener("chainChanged", pageReload);
-  ethereum.on("accountsChanged", handleAccount(ethereum));
+const removeGlobalListeners = (ethereum: MetaMaskInpageProvider) => {
+  ethereum?.removeListener("chainChanged", pageReload);
+  ethereum?.removeListener("accountsChanged", handleAccount(ethereum));
 };
 
 const Web3Context = createContext<Web3State>(createDefaultState());
@@ -70,7 +70,7 @@ const Web3Provider: FunctionComponent<Web3ProviderProps> = ({ children }) => {
     }
 
     initWeb3();
-    return () => removeGlobalListners(window.ethereum);
+    return () => removeGlobalListeners(window.ethereum);
   }, []);
 
   return <Web3Context.Provider value={web3}>{children}</Web3Context.Provider>;
