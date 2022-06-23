@@ -73,7 +73,11 @@ export default function Navbar() {
                     >
                       <circle cx={4} cy={4} r={3} />
                     </svg>
-                    {network.data ? network.data : "Loading..."}
+                    {network.isLoading
+                      ? "Loading..."
+                      : account.isInstalled
+                      ? network.data
+                      : "Install Web3 Wallet"}
                   </span>
                 </div>
 

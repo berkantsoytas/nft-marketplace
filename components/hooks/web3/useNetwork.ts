@@ -12,8 +12,13 @@ const NETWORKS: { [k: string]: string } = {
   1337: "Ganache",
 };
 
+const targetId = process.env.NEXT_PUBLIC_TARGET_CHAIN_ID as string;
+const targetNetwork = NETWORKS[targetId];
+
 type UseNetworkResponse = {
   isLoading: boolean;
+  isSupported: boolean;
+  targetNetwork: string;
 };
 
 type NetworkHookFactory = CryptoHookFactory<string, UseNetworkResponse>;
@@ -27,7 +32,6 @@ export const hookFactory: NetworkHookFactory =
       provider ? "web3/useNetwork" : null,
       async () => {
         const chainId = (await provider!.getNetwork()).chainId;
-
         if (!chainId) {
           throw "Cannot retreive network. Please, refresh browser or connect to other one.";
         }
@@ -36,6 +40,7 @@ export const hookFactory: NetworkHookFactory =
       },
       {
         revalidateOnFocus: false,
+        shouldRetryOnError: false,
       }
     );
 
@@ -43,6 +48,8 @@ export const hookFactory: NetworkHookFactory =
       ...swr,
       data,
       isValidating,
+      targetNetwork,
+      isSupported: data === targetNetwork,
       isLoading: isLoading || isValidating,
     };
   };
