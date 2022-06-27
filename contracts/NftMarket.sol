@@ -95,6 +95,10 @@ contract NftMarket is ERC721URIStorage{
     return items;
   }
 
+  function burnToken(uint256 tokenId) public {
+    _burn(tokenId);
+  }
+
   function mintToken(string memory tokenURI, uint256 price) public payable returns (uint) {
     require(!tokenURIExists(tokenURI), "NFT Market: Token URI already exists.");
     require(msg.value == listingPrice, "NFT Market: Price must be equal to listing price");
@@ -111,7 +115,7 @@ contract NftMarket is ERC721URIStorage{
     return newTokenId;
   }
 
-  function buyNft (uint tokenId) public payable {
+  function buyNft(uint tokenId) public payable {
     uint256 price = _idToNftItem[tokenId].price;
     address owner = ERC721.ownerOf(tokenId);
 
