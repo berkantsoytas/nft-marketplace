@@ -3,8 +3,9 @@ pragma solidity ^0.8.13;
 
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract NftMarket is ERC721URIStorage{
+contract NftMarket is ERC721URIStorage, Ownable {
   using Counters for Counters.Counter;
 
   uint256 public listingPrice = 0.025 ether;
@@ -37,6 +38,10 @@ contract NftMarket is ERC721URIStorage{
 
   constructor() ERC721("CreaturesNFT", "CNFT") { }
 
+  function setListingPrice(uint256 newPrice) external onlyOwner {
+    require(newPrice > 0, "NftMarket: Price must be at least 1 wei");
+    listingPrice = newPrice;
+  }
   
   function getNftItem(uint256 tokenId) public view returns (NftItem memory) {
     return _idToNftItem[tokenId];
@@ -50,16 +55,16 @@ contract NftMarket is ERC721URIStorage{
     return _usedTokenURIs[tokenURI] == true;
   }
 
-  function totalSupply() public view returns (uint) {
+  function totalSupply() public view returns (uint256) {
     return _allNfts.length;
   }
 
-  function tokenByIndex(uint256 index) public view returns (uint) {
+  function tokenByIndex(uint256 index) public view returns (uint256) {
     require(index < totalSupply(), "NFT Market: Index out of bounds");
     return _allNfts[index];
   }
 
-  function tokenOfOwnedByIndex(address owner, uint256 index) public view returns (uint) {
+  function tokenOfOwnedByIndex(address owner, uint256 index) public view returns (uint256) {
     require(index < ERC721.balanceOf(owner), "NFT Market: Index out of bounds");
     return _ownedTokens[owner][index];
   }
@@ -99,14 +104,14 @@ contract NftMarket is ERC721URIStorage{
     _burn(tokenId);
   }
 
-  function mintToken(string memory tokenURI, uint256 price) public payable returns (uint) {
+  function mintToken(string memory tokenURI, uint256 price) public payable returns (uint256) {
     require(!tokenURIExists(tokenURI), "NFT Market: Token URI already exists.");
     require(msg.value == listingPrice, "NFT Market: Price must be equal to listing price");
 
     _tokenIds.increment();
     _listedItems.increment();
 
-    uint newTokenId = _tokenIds.current();
+    uint256 newTokenId = _tokenIds.current();
     _safeMint(msg.sender, newTokenId);
     _setTokenURI(newTokenId, tokenURI);
     createNftItem(newTokenId, price);
@@ -115,7 +120,7 @@ contract NftMarket is ERC721URIStorage{
     return newTokenId;
   }
 
-  function buyNft(uint tokenId) public payable {
+  function buyNft(uint256 tokenId) public payable {
     uint256 price = _idToNftItem[tokenId].price;
     address owner = ERC721.ownerOf(tokenId);
 
@@ -128,6 +133,18 @@ contract NftMarket is ERC721URIStorage{
     _transfer(owner, msg.sender, tokenId);
     payable(owner).transfer(msg.value);
   }
+
+  function placeNftOnSale(uint256 tokenId, uint256 newPrice) public payable {
+    require(ERC721.ownerOf(tokenId) == msg.sender, "NftMarket: You are not owner of this NFT.");
+    require(_idToNftItem[tokenId].isListed == false, "NftMarket: Item is already on sale.");
+    require(msg.value == listingPrice, "NftMarket: Price must be equal to listing price.");
+
+    _idToNftItem[tokenId].isListed = true;
+    _idToNftItem[tokenId].price = newPrice;
+    _listedItems.increment();
+  }
+
+  // private
 
   function createNftItem(uint256 tokenId, uint256 price) private {
     require(price > 0, "NFT Market:  Price must be at least 1 wei");
