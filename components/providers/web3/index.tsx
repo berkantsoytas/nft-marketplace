@@ -13,6 +13,7 @@ import {
   Web3State,
 } from "./utils";
 import { ethers } from "ethers";
+import { NftMarketContract } from "@_types/nftMarketContract";
 
 const pageReload = () => window.location.reload();
 const handleAccount = (ethereum: MetaMaskInpageProvider) => async () => {
@@ -53,7 +54,7 @@ const Web3Provider: FunctionComponent<Web3ProviderProps> = ({ children }) => {
         setWeb3(
           createWeb3State({
             isLoading: false,
-            contract,
+            contract: contract as unknown as NftMarketContract,
             ethereum: window.ethereum,
             provider,
           })
