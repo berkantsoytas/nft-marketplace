@@ -14,7 +14,7 @@ export type NftMetadata = {
 
 export type NftCore = {
   tokenId: number;
-  price: string;
+  price: number;
   creator: string;
   isListed: boolean;
 };

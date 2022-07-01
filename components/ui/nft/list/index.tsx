@@ -1,10 +1,10 @@
 /* eslint-disable @next/next/no-img-element */
 import { FunctionComponent } from "react";
-import { NftMetadata } from "../../../types/nft";
+import { Nft } from "@_types/nft";
 import NftItem from "../item";
 
 type NftListsProps = {
-  nfts: NftMetadata[];
+  nfts: Nft[] | undefined;
 };
 
 const NftList: FunctionComponent<NftListsProps> = ({ nfts }) => {
@@ -13,7 +13,7 @@ const NftList: FunctionComponent<NftListsProps> = ({ nfts }) => {
       {nfts &&
         nfts.map((nft) => (
           <div
-            key={nft.image}
+            key={nft.meta.image}
             className="flex flex-col rounded-lg shadow-lg overflow-hidden"
           >
             <NftItem item={nft} />
