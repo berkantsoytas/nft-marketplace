@@ -50,11 +50,15 @@ const Web3Provider: FunctionComponent<Web3ProviderProps> = ({ children }) => {
           window.ethereum as any
         );
         const contract = await loadContract("NftMarket", provider);
+
+        const signer = provider.getSigner();
+        const signedContract = contract.connect(signer);
+
         setGlobalListeners(window.ethereum);
         setWeb3(
           createWeb3State({
             isLoading: false,
-            contract: contract as unknown as NftMarketContract,
+            contract: signedContract as unknown as NftMarketContract,
             ethereum: window.ethereum,
             provider,
           })
