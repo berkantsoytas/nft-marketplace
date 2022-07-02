@@ -14,7 +14,7 @@ export type Web3Hooks = {
   useAccount: UseAccountHook;
   useNetwork: UseNetworkHook;
   useListedNfts: UseListedNftsHook;
-  useOwnedNfts: UseListedNftsHook;
+  useOwnedNfts: UseOwnedNftsHook;
 };
 
 export type SetupHooks = {
