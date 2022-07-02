@@ -1,16 +1,53 @@
 /* eslint-disable @next/next/no-img-element */
 
 import type { NextPage } from "next";
-import { useState } from "react";
+import { ChangeEvent, useState } from "react";
 import { BaseLayout } from "@ui";
 import { Switch } from "@headlessui/react";
 import Link from "next/link";
+import { NftMetadata } from "@_types/nft";
+import axios from "axios";
 
 const ATTRIBUTES = ["health", "attack", "speed"];
 
 const NftCreate: NextPage = () => {
   const [nftURI, setNftURI] = useState("");
   const [hasURI, setHasURI] = useState(false);
+  const [nftMeta, setNftMeta] = useState<NftMetadata>({
+    name: "",
+    description: "",
+    image: "",
+    attributes: [
+      { trait_type: "attack", value: "0" },
+      { trait_type: "speed", value: "0" },
+      { trait_type: "health", value: "0" },
+    ],
+  });
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setNftMeta({ ...nftMeta, [name]: value });
+  };
+
+  const handleAttributeChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    const attributeIdx = nftMeta.attributes.findIndex((attr) => attr.trait_type === name);
+
+    nftMeta.attributes[attributeIdx].value = value;
+    setNftMeta({
+      ...nftMeta,
+      attributes: nftMeta.attributes,
+    });
+  };
+
+  const createNft = async () => {
+    try {
+      const messageToSign = await axios.get("/api/verify");
+      console.log(messageToSign);
+    } catch (e: any) {
+      console.log(e.message);
+    }
+  };
 
   return (
     <BaseLayout>
@@ -22,7 +59,7 @@ const NftCreate: NextPage = () => {
               <Switch
                 checked={hasURI}
                 onChange={() => setHasURI(!hasURI)}
-                className={`${hasURI ? "bg-indigo-900" : "bg-indigo-700"}
+                className={`${hasURI ? "bg-green-500" : "bg-blue-500"}
             relative inline-flex flex-shrink-0 h-[28px] w-[64px] border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus-visible:ring-2  focus-visible:ring-white focus-visible:ring-opacity-75`}
               >
                 <span className="sr-only">Use setting</span>
@@ -125,6 +162,8 @@ const NftCreate: NextPage = () => {
                       </label>
                       <div className="mt-1 flex rounded-md shadow-sm">
                         <input
+                          value={nftMeta.name}
+                          onChange={handleChange}
                           type="text"
                           name="name"
                           id="name"
@@ -139,12 +178,13 @@ const NftCreate: NextPage = () => {
                       </label>
                       <div className="mt-1">
                         <textarea
+                          onChange={handleChange}
                           id="description"
+                          value={nftMeta.description}
                           name="description"
                           rows={3}
                           className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full sm:text-sm border border-gray-300 rounded-md"
                           placeholder="Some nft description..."
-                          defaultValue={""}
                         />
                       </div>
                       <p className="mt-2 text-sm text-gray-500">Brief description of NFT</p>
@@ -158,7 +198,7 @@ const NftCreate: NextPage = () => {
                       />
                     ) : (
                       <div>
-                        <label className="block text-sm font-medium text-gray-700">Cover photo</label>
+                        <label className="block text-sm font-medium text-gray-700">Image</label>
                         <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
                           <div className="space-y-1 text-center">
                             <svg
@@ -191,15 +231,18 @@ const NftCreate: NextPage = () => {
                       </div>
                     )}
                     <div className="grid grid-cols-6 gap-6">
-                      {ATTRIBUTES.map((attribute) => (
-                        <div key={attribute} className="col-span-6 sm:col-span-6 lg:col-span-2">
-                          <label htmlFor={attribute} className="block text-sm font-medium text-gray-700">
-                            {attribute}
+                      {nftMeta.attributes.map((attribute) => (
+                        <div key={attribute.trait_type} className="col-span-6 sm:col-span-6 lg:col-span-2">
+                          <label htmlFor={attribute.trait_type} className="block text-sm font-medium text-gray-700">
+                            {attribute.trait_type}
                           </label>
                           <input
                             type="text"
-                            name={attribute}
-                            id={attribute}
+                            onChange={handleAttributeChange}
+                            value={attribute.value}
+                            placeholder={attribute.value}
+                            name={attribute.trait_type}
+                            id={attribute.trait_type}
                             className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
                           />
                         </div>
@@ -209,10 +252,11 @@ const NftCreate: NextPage = () => {
                   </div>
                   <div className="px-4 py-3 bg-gray-50 text-right sm:px-6">
                     <button
+                      onClick={createNft}
                       type="button"
                       className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                     >
-                      Save
+                      List
                     </button>
                   </div>
                 </div>
